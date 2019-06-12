@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const Users = require('../users/users-model.js');
+const secrets = require('../config/secrets.js');
 
 // for endpoints beginning with /api/auth
 router.post('/register', (req, res) => {
@@ -27,11 +28,12 @@ router.post('/login', (req, res) => {
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password)) {
         const token = generateToken(user);
+
         res.status(200).json({
           message: `Welcome ${user.username}`, token,
         });
       } else {
-        res.status(401).json({ message: 'Invalid Credentials' });
+        res.status(401).json({ message: 'You shall not pass!' });
       }
     })
     .catch(error => {
@@ -50,11 +52,11 @@ function generateToken(user) {
   const payload = {
     subject: user.id, // standard claim = sub
     username: user.username,
-    roles: ['student'],
+    department: user.department,
   };
 
   const options = {
-    expiresIn: '1d',
+    expiresIn: '1h',
   };
 
   return jwt.sign(payload, secrets.jwtSecret, options);

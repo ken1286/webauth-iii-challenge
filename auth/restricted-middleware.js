@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
         res.status(401).json({ message: 'Invalid Credentials' });
       } else {
         // valid token
-        req.user = { roles: decodeToken.roles, username: decodeToken.username };
+        req.user = { department: decodeToken.department, username: decodeToken.username };
         next();
       }
     });
